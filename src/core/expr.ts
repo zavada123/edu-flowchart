@@ -94,7 +94,11 @@ const COMPARISONS = new Set(["<", ">", "<=", ">=", "==", "!="])
 /** Recursive descent: or < and < not < comparison < + - < * / // % < unary - < ** < primary. */
 class Parser {
   private pos = 0
-  constructor(private readonly tokens: readonly Token[]) {}
+  private readonly tokens: readonly Token[]
+
+  constructor(tokens: readonly Token[]) {
+    this.tokens = tokens
+  }
 
   parseAll(): Expr[] {
     if (this.tokens.length === 0) throw new ExprError("Порожній вираз")
