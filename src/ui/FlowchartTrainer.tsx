@@ -31,6 +31,7 @@ import { BulbIcon, CheckIcon, PauseIcon, PlayIcon, StepIcon, StopIcon } from "./
 import { ResultView } from "./ResultView.tsx"
 import { FullScreenButton, useFullScreen } from "./fullscreen.tsx"
 import { RunPanel } from "./RunPanel.tsx"
+import "./tokens.css"
 import "./flowchart.css"
 
 interface Props {

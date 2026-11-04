@@ -1,5 +1,6 @@
 import { TOPIC_NAMES, type Task, type TaskTopic } from "../core/index.ts"
 import { ShapeIcon } from "./Icons.tsx"
+import "./tokens.css"
 import "./flowchart.css"
 import "./catalog.css"
 

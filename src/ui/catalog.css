@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
-  color: #0f172a;
+  color: var(--edu-ink-900);
   font-family: inherit;
 }
 
@@ -28,20 +28,20 @@
   flex: 0 1 180px;
   height: 8px;
   overflow: hidden;
-  background: #e2e8f0;
+  background: var(--edu-ink-200);
   border-radius: 4px;
 }
 
 .edu-ft-bar span {
   display: block;
   height: 100%;
-  background: linear-gradient(90deg, #6366f1, #22c55e);
+  background: var(--edu-green-500);
   border-radius: 4px;
 }
 
 .edu-ft-legend {
   font-size: 13px;
-  color: #64748b;
+  color: var(--edu-ink-600);
 }
 
 .edu-ft-group {
@@ -81,28 +81,28 @@
   text-align: left;
   color: inherit;
   background: #fff;
-  border: 1.5px solid #e3e7ef;
+  border: 1.5px solid var(--edu-ink-200);
   border-radius: 16px;
-  box-shadow: 0 1px 2px rgb(15 23 42 / 0.04);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--edu-ink-900) 4%, transparent);
   cursor: pointer;
   transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
 }
 
 .edu-ft-card:hover,
 .edu-ft-card:focus-visible {
-  border-color: #a5b4fc;
-  box-shadow: 0 6px 18px rgb(79 70 229 / 0.12);
+  border-color: var(--edu-pink-300);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--edu-pink-600) 12%, transparent);
   transform: translateY(-1px);
   outline: none;
 }
 
 .edu-ft-card.is-current {
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 3px rgb(79 70 229 / 0.18);
+  border-color: var(--edu-pink-600);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--edu-pink-600) 18%, transparent);
 }
 
 .edu-ft-card.is-solved {
-  background: #f6fef9;
+  background: var(--edu-green-50);
 }
 
 .edu-ft-card b {
@@ -115,7 +115,7 @@
   overflow: hidden;
   font-size: 0.85em;
   line-height: 1.4;
-  color: #64748b;
+  color: var(--edu-ink-600);
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
@@ -137,19 +137,19 @@
 }
 
 .edu-ft-mode-build {
-  color: #4338ca;
-  background: #eef2ff;
+  color: var(--edu-pink-700);
+  background: var(--edu-pink-50);
 }
 
 .edu-ft-mode-trace {
-  color: #b45309;
-  background: #fef3c7;
+  color: var(--edu-amber-700);
+  background: var(--edu-amber-100);
 }
 
 .edu-ft-grade {
   font-size: 12px;
   font-weight: 700;
-  color: #64748b;
+  color: var(--edu-ink-600);
 }
 
 .edu-ft-done {
@@ -161,6 +161,6 @@
   font-size: 12px;
   font-weight: 900;
   color: #fff;
-  background: #16a34a;
+  background: var(--edu-green-600);
   border-radius: 50%;
 }
