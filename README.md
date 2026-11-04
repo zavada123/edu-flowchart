@@ -101,6 +101,12 @@ import { FlowchartQuest, lostRover } from "edu-flowchart"
 
 On the server, `checkQuest(lostRover, progress)` runs every saved flowchart and answer again and keeps only the steps that really pass. In the iframe demo the quest is the default page (`?embed=1`) and posts `edu-flowchart:quest` messages.
 
+### Free mode and the task list
+
+`FlowchartSandbox` is a blank canvas with every block: the student draws any algorithm, runs it and presses «Поділитися» to copy a link. The chart lives in the link itself (`#fc=<code>`, see `encodeShare` / `decodeShare`), so no server is needed. Pass `initialChart={decodeShare(code)}` and `fromLink` to open a shared chart.
+
+`TaskCatalog` shows the single tasks as cards grouped by topic, with the task type, grade and a check mark for solved ones. Tasks can set `grade` and `topic` (`linear`, `branch`, `loop`, `everyday`).
+
 ### Grade on the server
 
 Do not trust `passed` from the browser: re-run the check on your server with the submitted program.

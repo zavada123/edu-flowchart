@@ -1,8 +1,10 @@
 import { StrictMode, useState } from "react"
 import { createRoot } from "react-dom/client"
-import { quests, tasks, type QuestProgress, type QuestReport, type Report } from "../core/index.ts"
+import { decodeShare, quests, tasks, type QuestProgress, type QuestReport, type Report } from "../core/index.ts"
 import { FlowchartQuest } from "../ui/FlowchartQuest.tsx"
+import { FlowchartSandbox } from "../ui/FlowchartSandbox.tsx"
 import { FlowchartTrainer } from "../ui/FlowchartTrainer.tsx"
+import { TaskCatalog } from "../ui/TaskCatalog.tsx"
 import "./demo.css"
 
 const firstTask = tasks[0]
@@ -14,6 +16,11 @@ const params = new URLSearchParams(window.location.search)
 const embedded = params.get("embed") === "1"
 const large = params.get("large") === "1"
 const QUEST = "quest"
+const FREE = "free"
+const TASKS = "tasks"
+/** A chart shared with a link: #fc=<code>. */
+const sharedCode = new URLSearchParams(window.location.hash.slice(1)).get("fc")
+const shared = sharedCode ? decodeShare(sharedCode) : undefined
 const STORAGE = `edu-flowchart:${firstQuest.id}`
 
 const loadProgress = (): QuestProgress | undefined => {
@@ -41,13 +48,16 @@ const sendToParent = (type: string, report: Report | QuestReport) => {
   if (window.parent !== window) window.parent.postMessage({ type, report }, "*")
 }
 
-/** Demo page: the story quest or any single task. */
+/** Demo page: the story quest, the single tasks or the free mode. */
 const Demo = () => {
-  const [id, setId] = useState(params.get("task") ?? QUEST)
+  const [mode, setMode] = useState(shared ? FREE : params.get("task") ? TASKS : (params.get("mode") ?? QUEST))
+  const [id, setId] = useState(params.get("task") ?? firstTask.id)
+  const [solved, setSolved] = useState<readonly string[]>([])
   const [last, setLast] = useState<Report | QuestReport>()
   const task = tasks.find((t) => t.id === id) ?? firstTask
   const onComplete = (report: Report) => {
     setLast(report)
+    if (report.passed && !solved.includes(report.taskId)) setSolved([...solved, report.taskId])
     sendToParent("edu-flowchart:result", report)
   }
   const onStepSolved = (report: QuestReport) => {
@@ -55,35 +65,32 @@ const Demo = () => {
     sendToParent("edu-flowchart:quest", report)
   }
   const trainer =
-    id === QUEST ? (
+    mode === QUEST ? (
       <FlowchartQuest quest={firstQuest} large={large} initialProgress={loadProgress()} onChange={saveProgress} onStepSolved={onStepSolved} />
+    ) : mode === FREE ? (
+      <FlowchartSandbox initialChart={shared} fromLink={shared !== undefined} large={large} />
     ) : (
-      <FlowchartTrainer key={task.id} task={task} large={large} onComplete={onComplete} />
+      <div className="demo-tasks">
+        {!embedded && <TaskCatalog tasks={tasks} solved={solved} current={task.id} onPick={(t) => { setId(t); setLast(undefined) }} />}
+        <FlowchartTrainer key={task.id} task={task} large={large} onComplete={onComplete} />
+      </div>
     )
   if (embedded) return trainer
   return (
     <div className="demo">
       <header className="demo-head">
         <strong>Тренажер блок-схем</strong>
-        <label>
-          <span className="demo-visually-hidden">Задача</span>
-          <select
-            value={id === QUEST ? QUEST : task.id}
-            onChange={(e) => {
-              setId(e.target.value)
-              setLast(undefined)
-            }}
-          >
-            <option value={QUEST}>🚀 Місія · {firstQuest.title}</option>
-            <optgroup label="Окремі задачі">
-              {tasks.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.mode === "trace" ? "Виконай" : "Склади"} · {t.title}
-                </option>
-              ))}
-            </optgroup>
-          </select>
-        </label>
+        <nav className="demo-tabs" aria-label="Режим">
+          {[
+            [QUEST, "🚀 Місія"],
+            [TASKS, "📚 Задачі"],
+            [FREE, "✏️ Вільна схема"]
+          ].map(([m, label]) => (
+            <button key={m} type="button" aria-pressed={mode === m} onClick={() => { setMode(m ?? QUEST); setLast(undefined) }}>
+              {label}
+            </button>
+          ))}
+        </nav>
       </header>
       <main className="demo-main">
         {trainer}

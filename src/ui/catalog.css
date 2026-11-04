@@ -1,0 +1,166 @@
+.edu-ft {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  color: #0f172a;
+  font-family: inherit;
+}
+
+.edu-ft *,
+.edu-ft *::before,
+.edu-ft *::after {
+  box-sizing: border-box;
+}
+
+.edu-ft-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+
+.edu-ft-count {
+  margin: 0;
+  font-weight: 700;
+}
+
+.edu-ft-bar {
+  flex: 0 1 180px;
+  height: 8px;
+  overflow: hidden;
+  background: #e2e8f0;
+  border-radius: 4px;
+}
+
+.edu-ft-bar span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #22c55e);
+  border-radius: 4px;
+}
+
+.edu-ft-legend {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.edu-ft-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.edu-ft .edu-ft-topic {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 1.05em;
+  font-weight: 800;
+}
+
+.edu-ft-topic .edu-fc-shape-icon {
+  width: 30px;
+  height: 21px;
+}
+
+.edu-ft-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 10px;
+}
+
+.edu-ft-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-height: 120px;
+  padding: 12px 14px;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  background: #fff;
+  border: 1.5px solid #e3e7ef;
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.04);
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+
+.edu-ft-card:hover,
+.edu-ft-card:focus-visible {
+  border-color: #a5b4fc;
+  box-shadow: 0 6px 18px rgb(79 70 229 / 0.12);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.edu-ft-card.is-current {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgb(79 70 229 / 0.18);
+}
+
+.edu-ft-card.is-solved {
+  background: #f6fef9;
+}
+
+.edu-ft-card b {
+  font-size: 1em;
+  line-height: 1.3;
+}
+
+.edu-ft-card small {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 0.85em;
+  line-height: 1.4;
+  color: #64748b;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.edu-ft-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.edu-ft-mode {
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-radius: 999px;
+}
+
+.edu-ft-mode-build {
+  color: #4338ca;
+  background: #eef2ff;
+}
+
+.edu-ft-mode-trace {
+  color: #b45309;
+  background: #fef3c7;
+}
+
+.edu-ft-grade {
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.edu-ft-done {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 900;
+  color: #fff;
+  background: #16a34a;
+  border-radius: 50%;
+}

@@ -895,6 +895,11 @@ html.edu-fc-page-full body {
   overflow: hidden;
 }
 
+/* A host page that keeps space for the scrollbar (scrollbar-gutter: stable) would show it as a white strip. */
+html.edu-fc-page-full {
+  scrollbar-gutter: auto;
+}
+
 .edu-fc.edu-fc-full,
 .edu-fq.edu-fq-full {
   position: fixed;

@@ -15,8 +15,25 @@ export interface TestCase {
 /** A structure the flowchart must contain, for tasks like "use a loop". */
 export type Requirement = "if" | "loop"
 
+/** What a task trains, for the task list. */
+export type TaskTopic = "linear" | "branch" | "loop" | "everyday"
+
+/** Ukrainian names of the topics. */
+export const TOPIC_NAMES: Readonly<Record<TaskTopic, string>> = {
+  linear: "Лінійні алгоритми",
+  branch: "Розгалуження",
+  loop: "Цикли",
+  everyday: "Алгоритми з життя"
+}
+
+/** Grade and topic of a task, for the task list. Both are optional. */
+interface TaskInfo {
+  readonly grade?: number
+  readonly topic?: TaskTopic
+}
+
 /** "Складіть блок-схему": the student builds the flowchart, the tests check it. */
-export interface BuildTask {
+export interface BuildTask extends TaskInfo {
   readonly id: string
   readonly mode: "build"
   readonly title: string
@@ -37,7 +54,7 @@ export interface TraceQuestion {
 }
 
 /** "Знайдіть значення c після виконання": the flowchart is given, the student predicts. */
-export interface TraceTask {
+export interface TraceTask extends TaskInfo {
   readonly id: string
   readonly mode: "trace"
   readonly title: string
