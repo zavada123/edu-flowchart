@@ -5,17 +5,28 @@ interface Props {
   readonly onAnswer: (yes: boolean) => void
 }
 
+const STATUS_CLASS: Readonly<Record<RunState["status"], string>> = {
+  running: "is-running",
+  ask: "is-ask",
+  done: "is-done",
+  error: "is-error"
+}
+
 /** Variables, output and the question a running flowchart asks. */
 export const RunPanel = ({ state, onAnswer }: Props) => {
   if (!state) return null
   const vars = Object.entries(state.vars)
   return (
-    <section className="edu-fc-panel edu-fc-run" aria-label="Виконання" aria-live="polite">
+    <section className={`edu-fc-panel edu-fc-run ${STATUS_CLASS[state.status]}`} aria-label="Виконання" aria-live="polite">
       <p className="edu-fc-status">
-        {state.status === "done" && "Кінець. Алгоритм виконано."}
-        {state.status === "running" && `Крок ${state.steps}. Наступний блок виділено.`}
-        {state.status === "error" && state.error?.message}
-        {state.status === "ask" && `${state.question}?`}
+        <span className="edu-fc-status-dot" aria-hidden="true" />
+        <span>
+          {state.status === "done" && "Кінець. Алгоритм виконано."}
+          {state.status === "running" && "Наступний блок підсвічено на схемі."}
+          {state.status === "error" && state.error?.message}
+          {state.status === "ask" && `${state.question}?`}
+        </span>
+        <span className="edu-fc-steps">крок {state.steps}</span>
       </p>
       {state.status === "ask" && (
         <div className="edu-fc-row">
@@ -27,33 +38,23 @@ export const RunPanel = ({ state, onAnswer }: Props) => {
           </button>
         </div>
       )}
-      <div className="edu-fc-run-grid">
-        <div>
-          <p className="edu-fc-panel-title">Змінні</p>
-          {vars.length === 0 ? (
-            <p className="edu-fc-muted">поки немає</p>
-          ) : (
-            <table className="edu-fc-vars">
-              <tbody>
-                {vars.map(([k, v]) => (
-                  <tr key={k}>
-                    <th>{k}</th>
-                    <td>{formatValue(v)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
-        <div>
-          <p className="edu-fc-panel-title">Виведено</p>
-          {state.output.length === 0 ? (
-            <p className="edu-fc-muted">поки нічого</p>
-          ) : (
-            <pre className="edu-fc-output">{state.output.map((line) => line.map(formatValue).join(" ")).join("\n")}</pre>
-          )}
-        </div>
-      </div>
+      <p className="edu-fc-panel-title">Змінні</p>
+      {vars.length === 0 ? (
+        <p className="edu-fc-muted">поки немає</p>
+      ) : (
+        <ul className="edu-fc-vars">
+          {vars.map(([k, v]) => (
+            <li key={k}>
+              <span>{k}</span>
+              <b>{formatValue(v)}</b>
+            </li>
+          ))}
+        </ul>
+      )}
+      <p className="edu-fc-panel-title">Виведено</p>
+      <pre className="edu-fc-output">
+        {state.output.length === 0 ? <span className="edu-fc-output-empty">поки нічого</span> : state.output.map((line) => line.map(formatValue).join(" ")).join("\n")}
+      </pre>
     </section>
   )
 }

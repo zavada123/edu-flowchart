@@ -45,7 +45,7 @@ const onEnter = (f: () => void) => (e: KeyboardEvent) => {
 
 const ShapeView = ({ s }: { readonly s: Shape }) => {
   if (s.kind === "terminal" || s.kind === "process") {
-    const rx = s.kind === "terminal" ? s.h / 2 : 4
+    const rx = s.kind === "terminal" ? s.h / 2 : 8
     return <rect className="edu-fc-outline" x={s.x - s.w / 2} y={s.y - s.h / 2} width={s.w} height={s.h} rx={rx} />
   }
   return <polygon className="edu-fc-outline" points={outline(s)} />
@@ -62,8 +62,8 @@ export const Chart = ({ layout, selected, active, broken, openSlot, editable, on
     aria-label="Блок-схема"
   >
     <defs>
-      <marker id="edu-fc-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-        <path d="M0,0 L10,5 L0,10 z" className="edu-fc-arrowhead" />
+      <marker id="edu-fc-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+        <path d="M0,1 L10,5 L0,9 z" className="edu-fc-arrowhead" />
       </marker>
     </defs>
     {layout.edges.map((e, i) => (
@@ -75,7 +75,7 @@ export const Chart = ({ layout, selected, active, broken, openSlot, editable, on
       />
     ))}
     {layout.labels.map((l, i) => (
-      <text key={i} className="edu-fc-label" x={l.x} y={l.y} textAnchor={l.anchor}>
+      <text key={i} className={l.text === "Так" ? "edu-fc-label edu-fc-label-yes" : "edu-fc-label edu-fc-label-no"} x={l.x} y={l.y} textAnchor={l.anchor}>
         {l.text}
       </text>
     ))}

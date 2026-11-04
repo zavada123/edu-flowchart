@@ -27,7 +27,9 @@ import {
 } from "../core/index.ts"
 import { Chart } from "./Chart.tsx"
 import { ALL_KINDS, BlockEditor, Palette } from "./Editor.tsx"
+import { BulbIcon, CheckIcon, PauseIcon, PlayIcon, StepIcon, StopIcon } from "./Icons.tsx"
 import { ResultView } from "./ResultView.tsx"
+import { FullScreenButton, useFullScreen } from "./fullscreen.tsx"
 import { RunPanel } from "./RunPanel.tsx"
 import "./flowchart.css"
 
@@ -38,9 +40,13 @@ interface Props {
   /** After every edit, to keep a draft. */
   readonly onChange?: (program: Program) => void
   /** A saved draft to continue (build tasks). */
-  readonly initialProgram?: Program
+  readonly initialProgram?: Program | undefined
+  /** Saved answers to continue (trace tasks). */
+  readonly initialAnswers?: readonly string[] | undefined
   /** Bigger text and buttons for grades 3–5. */
   readonly large?: boolean
+  /** False hides the title, text and hint: a host such as the quest shows the task itself. */
+  readonly showHeader?: boolean
 }
 
 const AUTO_STEP_MS = 700
@@ -59,8 +65,13 @@ const inputNames = (program: Program): string[] => {
   return [...new Set(names)]
 }
 
+/** "4; 0; 8" is a list: an Input block inside a loop reads one value per run. */
+const toValue = (text: string) => (text.includes(";") ? text.split(";").filter((t) => t.trim() !== "").map(parseInputValue) : parseInputValue(text))
+
 const toInputs = (texts: Readonly<Record<string, string>>, names: readonly string[]): Inputs =>
-  Object.fromEntries(names.filter((n) => (texts[n] ?? "").trim() !== "").map((n) => [n, parseInputValue(texts[n] ?? "")]))
+  Object.fromEntries(names.filter((n) => (texts[n] ?? "").trim() !== "").map((n) => [n, toValue(texts[n] ?? "")]))
+
+const MODE_NAMES: Readonly<Record<Task["mode"], string>> = { build: "Склади блок-схему", trace: "Виконай блок-схему" }
 
 interface Run {
   readonly compiled: Compiled
@@ -69,7 +80,7 @@ interface Run {
 }
 
 /** Flowchart exercise: build or read a flowchart, run it step by step, check it. */
-export const FlowchartTrainer = ({ task, onComplete, onChange, initialProgram, large = false }: Props) => {
+export const FlowchartTrainer = ({ task, onComplete, onChange, initialProgram, initialAnswers, large = false, showHeader = true }: Props) => {
   const editable = task.mode === "build"
   const [program, setProgram] = useState<Program>(() => (task.mode === "trace" ? task.program : initialProgram ?? task.start ?? EMPTY))
   const [selected, setSelected] = useState<string>()
@@ -79,9 +90,10 @@ export const FlowchartTrainer = ({ task, onComplete, onChange, initialProgram, l
   const [issues, setIssues] = useState<readonly Issue[]>([])
   const [inputTexts, setInputTexts] = useState<Readonly<Record<string, string>>>({})
   const [question, setQuestion] = useState(0)
-  const [answers, setAnswers] = useState<readonly string[]>(() => (task.mode === "trace" ? task.questions.map(() => "") : []))
+  const [answers, setAnswers] = useState<readonly string[]>(() => (task.mode === "trace" ? task.questions.map((_, i) => initialAnswers?.[i] ?? "") : []))
   const [report, setReport] = useState<Report>()
 
+  const screen = useFullScreen()
   const picture = useMemo(() => layout(program), [program])
   const names = useMemo(() => inputNames(program), [program])
   const live = useMemo(() => compile(program).issues, [program])
@@ -113,18 +125,28 @@ export const FlowchartTrainer = ({ task, onComplete, onChange, initialProgram, l
     task.mode === "trace" ? (task.questions[question]?.inputs ?? {}) : toInputs(inputTexts, names)
 
   /** Starts a new run, or returns the one going on. */
-  const ensureRun = (): Run | undefined => {
-    if (run && run.state.status !== "done" && run.state.status !== "error") return run
+  const ensureRun = (fresh = false, inputs = currentInputs()): Run | undefined => {
+    if (!fresh && run && run.state.status !== "done" && run.state.status !== "error") return run
     const { compiled, issues: found } = compile(program)
     setIssues(found)
     if (!compiled) return undefined
     setSelected(undefined)
     setOpenSlot(undefined)
-    return { compiled, state: start(compiled), inputs: currentInputs() }
+    return { compiled, state: start(compiled), inputs }
   }
 
   const play = () => {
     const r = ensureRun()
+    if (!r) return
+    setRun(r)
+    setAuto(true)
+  }
+
+  /** Trace tasks: run the chart with the inputs of question i. */
+  const playQuestion = (i: number) => {
+    if (task.mode !== "trace") return
+    setQuestion(i)
+    const r = ensureRun(true, task.questions[i]?.inputs ?? {})
     if (!r) return
     setRun(r)
     setAuto(true)
@@ -155,36 +177,49 @@ export const FlowchartTrainer = ({ task, onComplete, onChange, initialProgram, l
   const canCheck = task.mode === "trace" || task.tests.length > 0
 
   return (
-    <div className={large ? "edu-fc edu-fc-large" : "edu-fc"}>
-      <header className="edu-fc-head">
-        <strong>{task.title}</strong>
-        <p>{task.text}</p>
-        {task.hint !== undefined && (
-          <details className="edu-fc-hint">
-            <summary>Підказка</summary>
-            {task.hint}
-          </details>
-        )}
-      </header>
+    <div className={`edu-fc${large ? " edu-fc-large" : ""}${screen.full ? " edu-fc-full" : ""}`}>
+      {showHeader && (
+        <header className="edu-fc-head">
+          <div className="edu-fc-head-row">
+            <span className={`edu-fc-mode edu-fc-mode-${task.mode}`}>{MODE_NAMES[task.mode]}</span>
+            <FullScreenButton full={screen.full} onToggle={screen.toggle} className="edu-fc-fullbtn" />
+          </div>
+          <h3 className="edu-fc-title">{task.title}</h3>
+          <p>{task.text}</p>
+          {task.hint !== undefined && (
+            <details className="edu-fc-hint">
+              <summary>
+                <BulbIcon /> Підказка
+              </summary>
+              <p>{task.hint}</p>
+            </details>
+          )}
+        </header>
+      )}
 
       <div className="edu-fc-layout">
-        <div className="edu-fc-scroll">
-          <Chart
-            layout={picture}
-            selected={selected}
-            active={running ? run.state.at : undefined}
-            broken={broken}
-            openSlot={openSlot}
-            editable={editable && !running}
-            onBlock={(id) => {
-              setOpenSlot(undefined)
-              setSelected(id === selected ? undefined : id)
-            }}
-            onSlot={(slot) => {
-              setSelected(undefined)
-              setOpenSlot(slot)
-            }}
-          />
+        <div className="edu-fc-canvas">
+          <div className="edu-fc-legend" aria-hidden="true">
+            {editable && !running ? "Торкнись «+», щоб додати блок, або блоку, щоб змінити його" : running ? "Виконання: підсвічено наступний блок" : "Блок-схема"}
+          </div>
+          <div className="edu-fc-scroll">
+            <Chart
+              layout={picture}
+              selected={selected}
+              active={running ? run.state.at : undefined}
+              broken={broken}
+              openSlot={openSlot}
+              editable={editable && !running}
+              onBlock={(id) => {
+                setOpenSlot(undefined)
+                setSelected(id === selected ? undefined : id)
+              }}
+              onSlot={(slot) => {
+                setSelected(undefined)
+                setOpenSlot(slot)
+              }}
+            />
+          </div>
         </div>
 
         <div className="edu-fc-side">
@@ -208,7 +243,7 @@ export const FlowchartTrainer = ({ task, onComplete, onChange, initialProgram, l
             />
           )}
           {editable && program.blocks.length === 0 && !openSlot && (
-            <p className="edu-fc-muted">Натисни «+» під блоком «Початок», щоб додати перший блок.</p>
+            <p className="edu-fc-empty">Натисни «+» під блоком «Початок», щоб додати перший блок.</p>
           )}
 
           {task.mode === "build" && names.length > 0 && (
@@ -221,6 +256,7 @@ export const FlowchartTrainer = ({ task, onComplete, onChange, initialProgram, l
                     <input
                       inputMode="decimal"
                       value={inputTexts[n] ?? ""}
+                      placeholder="?"
                       onChange={(e) => {
                         setInputTexts({ ...inputTexts, [n]: e.target.value })
                         stop()
@@ -236,13 +272,15 @@ export const FlowchartTrainer = ({ task, onComplete, onChange, initialProgram, l
             <section className="edu-fc-panel" aria-label="Запитання">
               <p className="edu-fc-panel-title">Твої відповіді</p>
               {task.questions.map((q, i) => (
-                <label key={i} className="edu-fc-answer">
-                  <span>
-                    Якщо {Object.entries(q.inputs).map(([k, v]) => `${k} = ${String(v)}`).join(", ")}, то {q.ask} =
-                  </span>
+                <div key={i} className={question === i ? "edu-fc-answer is-on" : "edu-fc-answer"}>
+                  <label htmlFor={`edu-fc-a-${task.id}-${i}`}>
+                    Якщо <code>{Object.entries(q.inputs).map(([k, v]) => `${k} = ${String(v)}`).join(", ")}</code>, то <code>{q.ask}</code> =
+                  </label>
                   <input
+                    id={`edu-fc-a-${task.id}-${i}`}
                     inputMode="decimal"
                     value={answers[i] ?? ""}
+                    placeholder="?"
                     onChange={(e) => {
                       setAnswers(answers.map((a, k) => (k === i ? e.target.value : a)))
                       setReport(undefined)
@@ -250,35 +288,35 @@ export const FlowchartTrainer = ({ task, onComplete, onChange, initialProgram, l
                   />
                   <button
                     type="button"
-                    className={question === i ? "edu-fc-chip edu-fc-chip-on" : "edu-fc-chip"}
+                    className="edu-fc-chip"
                     aria-pressed={question === i}
-                    onClick={() => {
-                      setQuestion(i)
-                      stop()
-                    }}
+                    aria-label="Виконати схему з цими даними"
+                    title="Виконати схему з цими даними"
+                    onClick={() => playQuestion(i)}
                   >
-                    виконати
+                    <PlayIcon />
                   </button>
-                </label>
+                </div>
               ))}
             </section>
           )}
 
-          <div className="edu-fc-row edu-fc-toolbar">
-            <button type="button" className="edu-fc-button" onClick={auto && running ? () => setAuto(false) : play}>
-              {auto && running ? "⏸ Пауза" : "▶ Виконати"}
-            </button>
-            <button type="button" className="edu-fc-button" onClick={stepOnce} disabled={run?.state.status === "ask"}>
-              Крок
-            </button>
-            {run && (
-              <button type="button" className="edu-fc-button" onClick={stop}>
-                ■ Скинути
+          <div className="edu-fc-controls">
+            <div className="edu-fc-group" role="group" aria-label="Виконання">
+              <button type="button" className="edu-fc-button" onClick={auto && running ? () => setAuto(false) : play}>
+                {auto && running ? <PauseIcon /> : <PlayIcon />}
+                {auto && running ? "Пауза" : "Виконати"}
               </button>
-            )}
+              <button type="button" className="edu-fc-button" onClick={stepOnce} disabled={run?.state.status === "ask"}>
+                <StepIcon /> Крок
+              </button>
+              <button type="button" className="edu-fc-button" onClick={stop} disabled={!run} aria-label="Скинути">
+                <StopIcon />
+              </button>
+            </div>
             {canCheck && (
-              <button type="button" className="edu-fc-button edu-fc-primary" onClick={check}>
-                Перевірити
+              <button type="button" className="edu-fc-button edu-fc-primary edu-fc-check" onClick={check}>
+                <CheckIcon /> Перевірити
               </button>
             )}
           </div>
