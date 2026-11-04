@@ -605,3 +605,38 @@
     transition: none !important;
   }
 }
+
+.edu-fq-fullbtn {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 6px 12px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  background: rgb(255 255 255 / 0.08);
+  border: 1px solid var(--fq-border);
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.edu-fq-fullbtn:hover {
+  background: rgb(255 255 255 / 0.16);
+}
+
+.edu-fq-full .edu-fq-body,
+.edu-fq-full .edu-fq-head,
+.edu-fq-full .edu-fq-end {
+  width: 100%;
+  max-width: 1400px;
+  margin-inline: auto;
+}
+
+@media (max-width: 600px) {
+  .edu-fq-fullbtn span {
+    display: none;
+  }
+}

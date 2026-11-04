@@ -15,6 +15,7 @@ import { FlowchartTrainer } from "./FlowchartTrainer.tsx"
 import { BulbIcon } from "./Icons.tsx"
 import { MissionLog, QuestStory } from "./QuestStory.tsx"
 import { Rover } from "./Rover.tsx"
+import { FullScreenButton, useFullScreen } from "./fullscreen.tsx"
 import "./quest.css"
 
 interface Props {
@@ -43,6 +44,7 @@ export const FlowchartQuest = ({ quest, initialProgress, onChange, onStepSolved,
   const successRef = useRef<HTMLDivElement>(null)
   const topRef = useRef<HTMLDivElement>(null)
 
+  const screen = useFullScreen()
   const steps = useMemo(() => allSteps(quest), [quest])
   const step: QuestStep | undefined = steps.find((s) => s.id === viewing)
   const solved = step !== undefined && progress.solved.includes(step.id)
@@ -86,7 +88,7 @@ export const FlowchartQuest = ({ quest, initialProgress, onChange, onStepSolved,
   const stepNumber = step ? steps.indexOf(step) + 1 : 0
 
   return (
-    <div className={large ? "edu-fq edu-fq-large" : "edu-fq"} ref={topRef}>
+    <div className={`edu-fq${large ? " edu-fq-large" : ""}${screen.full ? " edu-fq-full" : ""}`} ref={topRef}>
       <header className="edu-fq-head">
         <div className="edu-fq-head-top">
           <div className="edu-fq-planet" aria-hidden="true" />
@@ -102,6 +104,7 @@ export const FlowchartQuest = ({ quest, initialProgress, onChange, onStepSolved,
               <span style={{ width: `${percent}%` }} />
             </div>
           </div>
+          <FullScreenButton full={screen.full} onToggle={screen.toggle} className="edu-fq-fullbtn" />
         </div>
         <nav className="edu-fq-map" aria-label="Розділи місії">
           {quest.chapters.map((ch, i) => {

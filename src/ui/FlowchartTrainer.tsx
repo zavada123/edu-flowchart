@@ -29,6 +29,7 @@ import { Chart } from "./Chart.tsx"
 import { ALL_KINDS, BlockEditor, Palette } from "./Editor.tsx"
 import { BulbIcon, CheckIcon, PauseIcon, PlayIcon, StepIcon, StopIcon } from "./Icons.tsx"
 import { ResultView } from "./ResultView.tsx"
+import { FullScreenButton, useFullScreen } from "./fullscreen.tsx"
 import { RunPanel } from "./RunPanel.tsx"
 import "./flowchart.css"
 
@@ -92,6 +93,7 @@ export const FlowchartTrainer = ({ task, onComplete, onChange, initialProgram, i
   const [answers, setAnswers] = useState<readonly string[]>(() => (task.mode === "trace" ? task.questions.map((_, i) => initialAnswers?.[i] ?? "") : []))
   const [report, setReport] = useState<Report>()
 
+  const screen = useFullScreen()
   const picture = useMemo(() => layout(program), [program])
   const names = useMemo(() => inputNames(program), [program])
   const live = useMemo(() => compile(program).issues, [program])
@@ -175,10 +177,13 @@ export const FlowchartTrainer = ({ task, onComplete, onChange, initialProgram, i
   const canCheck = task.mode === "trace" || task.tests.length > 0
 
   return (
-    <div className={large ? "edu-fc edu-fc-large" : "edu-fc"}>
+    <div className={`edu-fc${large ? " edu-fc-large" : ""}${screen.full ? " edu-fc-full" : ""}`}>
       {showHeader && (
         <header className="edu-fc-head">
-          <span className={`edu-fc-mode edu-fc-mode-${task.mode}`}>{MODE_NAMES[task.mode]}</span>
+          <div className="edu-fc-head-row">
+            <span className={`edu-fc-mode edu-fc-mode-${task.mode}`}>{MODE_NAMES[task.mode]}</span>
+            <FullScreenButton full={screen.full} onToggle={screen.toggle} className="edu-fc-fullbtn" />
+          </div>
           <h3 className="edu-fc-title">{task.title}</h3>
           <p>{task.text}</p>
           {task.hint !== undefined && (

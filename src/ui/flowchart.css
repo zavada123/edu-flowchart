@@ -859,3 +859,60 @@ ul.edu-fc-panel.edu-fc-issues {
 .edu-fc-answer code {
   white-space: nowrap;
 }
+
+/* Full screen */
+
+.edu-fc-head-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+}
+
+.edu-fc-fullbtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 4px 12px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--edu-fg);
+  background: #fff;
+  border: 1.5px solid #d6dbe6;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.edu-fc-fullbtn:hover {
+  border-color: #a5b4fc;
+}
+
+html.edu-fc-page-full,
+html.edu-fc-page-full body {
+  overflow: hidden;
+}
+
+.edu-fc.edu-fc-full,
+.edu-fq.edu-fq-full {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  max-width: none;
+  margin: 0;
+  overflow-y: auto;
+  border-radius: 0;
+  overscroll-behavior: contain;
+}
+
+.edu-fc-full .edu-fc-scroll {
+  max-height: calc(100vh - 220px);
+}
+
+@media (max-width: 480px) {
+  .edu-fc-fullbtn span {
+    display: none;
+  }
+}
