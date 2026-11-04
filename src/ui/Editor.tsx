@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react"
 import type { Block, BlockKind } from "../core/index.ts"
+import { ShapeIcon, TrashIcon } from "./Icons.tsx"
 
 export const KIND_NAMES: Readonly<Record<BlockKind, string>> = {
   process: "Дія",
@@ -41,19 +42,24 @@ interface PaletteProps {
 
 /** Which block to add at the chosen "+". */
 export const Palette = ({ kinds, onPick, onCancel }: PaletteProps) => (
-  <section className="edu-fc-panel" aria-label="Новий блок">
-    <p className="edu-fc-panel-title">Який блок додати?</p>
+  <section className="edu-fc-panel edu-fc-sheet" aria-label="Новий блок">
+    <div className="edu-fc-sheet-head">
+      <p className="edu-fc-panel-title">Який блок додати?</p>
+      <button type="button" className="edu-fc-close" onClick={onCancel} aria-label="Скасувати">
+        ×
+      </button>
+    </div>
     <div className="edu-fc-palette">
       {kinds.map((k) => (
         <button key={k} type="button" className={`edu-fc-pick edu-fc-pick-${k}`} onClick={() => onPick(k)}>
-          <b>{KIND_NAMES[k]}</b>
-          <small>{KIND_HINTS[k]}</small>
+          <ShapeIcon kind={k} />
+          <span>
+            <b>{KIND_NAMES[k]}</b>
+            <small>{KIND_HINTS[k]}</small>
+          </span>
         </button>
       ))}
     </div>
-    <button type="button" className="edu-fc-link" onClick={onCancel}>
-      Скасувати
-    </button>
   </section>
 )
 
@@ -72,10 +78,14 @@ export const BlockEditor = ({ block, problem, onText, onDelete, onClose }: Edito
   const field = FIELD[block.kind]
   const inner = block.kind === "if" ? block.yes.length + block.no.length : "body" in block ? block.body.length : 0
   return (
-    <section className="edu-fc-panel" aria-label="Блок">
+    <section className="edu-fc-panel edu-fc-sheet" aria-label="Блок">
       <label className="edu-fc-field">
-        <span>
-          {KIND_NAMES[block.kind]}: {field.label.toLowerCase()}
+        <span className="edu-fc-field-head">
+          <ShapeIcon kind={block.kind} />
+          <span>
+            <b>{KIND_NAMES[block.kind]}</b>
+            <small>{field.label}</small>
+          </span>
         </span>
         <input
           ref={inputRef}
@@ -94,6 +104,7 @@ export const BlockEditor = ({ block, problem, onText, onDelete, onClose }: Edito
           Готово
         </button>
         <button type="button" className="edu-fc-button edu-fc-danger" onClick={onDelete}>
+          <TrashIcon />
           {inner > 0 ? "Видалити разом із вкладеними" : "Видалити"}
         </button>
       </div>

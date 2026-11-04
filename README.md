@@ -84,6 +84,23 @@ import { FlowchartTrainer, tasks } from "edu-flowchart"
 }
 ```
 
+### Story quest
+
+`FlowchartQuest` turns tasks into a story, like the SQL detective of EduProstir. The built-in quest `lostRover` («Де зник «Сокіл»?», grades 5–8) has 10 steps in 4 chapters: the student helps the Mars rover Іскра find a rover that went silent, through linear algorithms, branching, loops and fixing a bug in a given chart. Every solved step adds an entry to the mission log.
+
+```tsx
+import { FlowchartQuest, lostRover } from "edu-flowchart"
+
+<FlowchartQuest
+  quest={lostRover}
+  initialProgress={saved}
+  onChange={(progress) => save(progress)}
+  onStepSolved={(report) => report.finished && giveBadge(report.score)}
+/>
+```
+
+On the server, `checkQuest(lostRover, progress)` runs every saved flowchart and answer again and keeps only the steps that really pass. In the iframe demo the quest is the default page (`?embed=1`) and posts `edu-flowchart:quest` messages.
+
 ### Grade on the server
 
 Do not trust `passed` from the browser: re-run the check on your server with the submitted program.
