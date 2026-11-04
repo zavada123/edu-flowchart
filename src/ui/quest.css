@@ -640,3 +640,11 @@
     display: none;
   }
 }
+
+/* The trainer is as wide as the task card above it. */
+.edu-fq .edu-fc {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  border-radius: 20px;
+}
