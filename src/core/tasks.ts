@@ -9,6 +9,8 @@ const inp = simple("input")
 export const tasks: readonly Task[] = [
   {
     id: "inf5-average",
+    grade: 5,
+    topic: "linear",
     mode: "build",
     title: "Середнє арифметичне трьох чисел",
     text: "Складіть блок-схему алгоритму знаходження середнього арифметичного трьох чисел. Уведіть a, b, c і виведіть їхнє середнє.",
@@ -23,6 +25,8 @@ export const tasks: readonly Task[] = [
   },
   {
     id: "inf5-triangle",
+    grade: 5,
+    topic: "linear",
     mode: "build",
     title: "Площа прямокутного трикутника",
     text: "Складіть блок-схему алгоритму обчислення площі прямокутного трикутника. Уведіть довжини катетів a і b та виведіть площу S.",
@@ -36,6 +40,8 @@ export const tasks: readonly Task[] = [
   },
   {
     id: "inf5-book",
+    grade: 5,
+    topic: "branch",
     mode: "build",
     title: "Книжка і сувенір",
     text: "Якщо ціна книжки не перевищує n гривень, купити цю книжку й сувенір, в іншому випадку купити тільки книжку. Уведіть ціну книжки p і суму n. Виведіть «книжка і сувенір» або «книжка».",
@@ -50,6 +56,8 @@ export const tasks: readonly Task[] = [
   },
   {
     id: "inf4-mushrooms",
+    grade: 4,
+    topic: "branch",
     mode: "build",
     title: "Їжачок і гриби",
     text: "Їжачок зібрав x маслюків і y лисичок. Прибігла білочка: «Дай мені 5 грибів, якщо зібрав більше ніж 7, а якщо ні, то 1». Скільки грибів залишилося в їжачка? Уведіть x і y та виведіть відповідь.",
@@ -64,6 +72,8 @@ export const tasks: readonly Task[] = [
   },
   {
     id: "inf5-trace-if",
+    grade: 5,
+    topic: "branch",
     mode: "trace",
     title: "Значення c після розгалуження",
     text: "Знайдіть значення величини c після виконання алгоритму, якщо значення b дорівнює 4, 6, 10.",
@@ -82,6 +92,8 @@ export const tasks: readonly Task[] = [
   },
   {
     id: "inf5-trace-loop",
+    grade: 5,
+    topic: "loop",
     mode: "trace",
     title: "Значення x після повторення",
     text: "Знайдіть значення величини x після виконання алгоритму, якщо початкове значення x дорівнює 4, 9, 10.",
@@ -97,6 +109,8 @@ export const tasks: readonly Task[] = [
   },
   {
     id: "inf8-sum5",
+    grade: 8,
+    topic: "loop",
     mode: "build",
     title: "Сума п'яти чисел",
     text: "Складіть блок-схему алгоритму знаходження суми 5 чисел, перше з яких дорівнює 7, а кожне з чотирьох наступних на 3 більше за попереднє. Виведіть суму.",
@@ -106,6 +120,8 @@ export const tasks: readonly Task[] = [
   },
   {
     id: "inf8-product",
+    grade: 8,
+    topic: "loop",
     mode: "build",
     title: "Добуток 1 · 2 · … · n",
     text: "Складіть блок-схему алгоритму, який для введеного натурального n обчислює добуток 1 · 2 · 3 · … · n і виводить його.",
@@ -119,6 +135,8 @@ export const tasks: readonly Task[] = [
   },
   {
     id: "inf8-digits",
+    grade: 8,
+    topic: "loop",
     mode: "build",
     title: "Скільки цифр у числі",
     text: "Складіть блок-схему алгоритму, який визначає, скільки цифр у натуральному числі x. Виведіть кількість цифр.",
@@ -133,6 +151,8 @@ export const tasks: readonly Task[] = [
   },
   {
     id: "inf5-apples",
+    grade: 5,
+    topic: "everyday",
     mode: "build",
     title: "Збирання яблук (пісочниця)",
     text: "Блок-схема збирання врожаю яблук. Запустіть її: на умову «Є яблука?» відповідатимете ви. Змініть алгоритм як хочете.",
