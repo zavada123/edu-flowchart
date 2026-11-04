@@ -2,6 +2,7 @@ import { useRef, useState } from "react"
 import { encodeShare, type BuildTask, type Program, type SharedChart } from "../core/index.ts"
 import { FlowchartTrainer } from "./FlowchartTrainer.tsx"
 import { FullScreenButton, useFullScreen } from "./fullscreen.tsx"
+import "./tokens.css"
 import "./sandbox.css"
 
 interface Props {

@@ -16,6 +16,7 @@ import { BulbIcon } from "./Icons.tsx"
 import { MissionLog, QuestStory } from "./QuestStory.tsx"
 import { Rover } from "./Rover.tsx"
 import { FullScreenButton, useFullScreen } from "./fullscreen.tsx"
+import "./tokens.css"
 import "./quest.css"
 
 interface Props {
