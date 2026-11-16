@@ -1,6 +1,7 @@
 import { useRef, useState } from "react"
 import { encodeShare, type BuildTask, type Program, type SharedChart } from "../core/index.ts"
 import { FlowchartTrainer } from "./FlowchartTrainer.tsx"
+import { copyLink, type CopiedLink } from "./copy-link.ts"
 import { FullScreenButton, useFullScreen } from "./fullscreen.tsx"
 import "./tokens.css"
 import "./sandbox.css"
@@ -12,8 +13,8 @@ interface Props {
   readonly fromLink?: boolean
   /** After every change of the chart or its title, to keep a draft. */
   readonly onChange?: (chart: SharedChart) => void
-  /** The link for a share code. By default this page with `#fc=<code>`. */
-  readonly shareUrl?: (code: string) => string
+  /** The link for a share code: now or later (a short link from a server; the promise must not fail). By default this page with `#fc=<code>`. */
+  readonly shareUrl?: (code: string) => string | Promise<string>
   readonly large?: boolean
 }
 
@@ -29,7 +30,7 @@ const EMPTY: Program = { blocks: [] }
 
 const defaultUrl = (code: string): string => `${window.location.origin}${window.location.pathname}${window.location.search}#fc=${code}`
 
-type Shared = { readonly kind: "none" } | { readonly kind: "copied"; readonly url: string } | { readonly kind: "show"; readonly url: string }
+type Shared = { readonly kind: "none" } | CopiedLink
 
 /** Free mode: the student draws any flowchart, runs it and shares it with a link. Nothing is checked. */
 export const FlowchartSandbox = ({ initialChart, fromLink = false, onChange, shareUrl = defaultUrl, large = false }: Props) => {
@@ -48,14 +49,8 @@ export const FlowchartSandbox = ({ initialChart, fromLink = false, onChange, sha
   }
 
   const share = async () => {
-    const url = shareUrl(encodeShare({ title: title.trim(), program: program.current }))
-    try {
-      await navigator.clipboard.writeText(url)
-      setShared({ kind: "copied", url })
-    } catch {
-      // No clipboard (an old browser, an iframe without permission): show the link to copy by hand.
-      setShared({ kind: "show", url })
-    }
+    // No clipboard (an old browser, an iframe without permission): the page shows the link to copy by hand.
+    setShared(await copyLink(shareUrl(encodeShare({ title: title.trim(), program: program.current })), navigator.clipboard))
   }
 
   const fresh = () => {
