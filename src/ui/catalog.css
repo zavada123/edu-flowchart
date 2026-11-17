@@ -146,12 +146,6 @@
   background: var(--edu-amber-100);
 }
 
-.edu-ft-grade {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--edu-ink-600);
-}
-
 .edu-ft-done {
   display: grid;
   place-items: center;

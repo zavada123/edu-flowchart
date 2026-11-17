@@ -94,7 +94,7 @@ export const FlowchartQuest = ({ quest, initialProgress, onChange, onStepSolved,
         <div className="edu-fq-head-top">
           <div className="edu-fq-planet" aria-hidden="true" />
           <div className="edu-fq-head-text">
-            <p className="edu-fq-kicker">Місія · {quest.grades} клас</p>
+            <p className="edu-fq-kicker">Місія</p>
             <h2 className="edu-fq-title">{quest.title}</h2>
           </div>
           <div className="edu-fq-meter" aria-label={`Виконано ${done} з ${total}`}>
