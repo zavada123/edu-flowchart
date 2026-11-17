@@ -21,7 +21,7 @@ const TOPIC_ICON: Readonly<Record<TaskTopic, "process" | "input" | "if" | "while
   loop: "while"
 }
 
-/** The single tasks as cards, grouped by topic: type, grade and a check mark for solved ones. */
+/** The single tasks as cards, grouped by topic: type and a check mark for solved ones. */
 export const TaskCatalog = ({ tasks, solved, current, onPick }: Props) => {
   const done = tasks.filter((t) => solved.includes(t.id)).length
   const groups = ORDER.map((topic) => ({ topic, items: tasks.filter((t) => (t.topic ?? "linear") === topic) })).filter((g) => g.items.length > 0)
@@ -57,7 +57,6 @@ export const TaskCatalog = ({ tasks, solved, current, onPick }: Props) => {
                 >
                   <span className="edu-ft-meta">
                     <span className={`edu-ft-mode edu-ft-mode-${t.mode}`}>{t.mode === "build" ? "Склади" : "Виконай"}</span>
-                    {t.grade !== undefined && <span className="edu-ft-grade">{t.grade} клас</span>}
                     {isSolved && (
                       <span className="edu-ft-done" aria-label="виконано">
                         ✓
