@@ -18,6 +18,8 @@ import { Rover } from "./Rover.tsx"
 import { FullScreenButton, useFullScreen } from "./fullscreen.tsx"
 import "./tokens.css"
 import "./quest.css"
+import "./rich-text.css"
+import { RichText } from "./RichText.tsx"
 
 interface Props {
   readonly quest: Quest
@@ -186,14 +188,19 @@ export const FlowchartQuest = ({ quest, initialProgress, onChange, onStepSolved,
               </span>
               <div>
                 <strong>{step.task.mode === "build" ? "Склади блок-схему" : "Виконай блок-схему"}</strong>
-                <p>{step.task.text}</p>
+                <p>
+                  <RichText text={step.task.text} />
+                </p>
               </div>
             </div>
             {!solved && step.hints.length > 0 && (
               <div className="edu-fq-hints">
                 {step.hints.slice(0, hintsShown).map((h, i) => (
                   <p key={i} className="edu-fq-hint">
-                    <BulbIcon /> {h}
+                    <BulbIcon />{" "}
+                    <span>
+                      <RichText text={h} />
+                    </span>
                   </p>
                 ))}
                 {hintsShown < step.hints.length && (
