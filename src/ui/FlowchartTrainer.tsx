@@ -33,6 +33,8 @@ import { FullScreenButton, useFullScreen } from "./fullscreen.tsx"
 import { RunPanel } from "./RunPanel.tsx"
 import "./tokens.css"
 import "./flowchart.css"
+import "./rich-text.css"
+import { RichText } from "./RichText.tsx"
 
 interface Props {
   readonly task: Task
@@ -186,13 +188,17 @@ export const FlowchartTrainer = ({ task, onComplete, onChange, initialProgram, i
             <FullScreenButton full={screen.full} onToggle={screen.toggle} className="edu-fc-fullbtn" />
           </div>
           <h3 className="edu-fc-title">{task.title}</h3>
-          <p>{task.text}</p>
+          <p>
+            <RichText text={task.text} />
+          </p>
           {task.hint !== undefined && (
             <details className="edu-fc-hint">
               <summary>
                 <BulbIcon /> Підказка
               </summary>
-              <p>{task.hint}</p>
+              <p>
+                <RichText text={task.hint} />
+              </p>
             </details>
           )}
         </header>
