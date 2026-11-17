@@ -21,7 +21,7 @@ export type RichPart =
   | { readonly kind: "code"; readonly text: string }
   | { readonly kind: "color"; readonly color: RichColor; readonly text: string }
 
-const MARK = /\*\*(.+?)\*\*|\[k\](.+?)\[\/k\]|`([^`\n]+)`|\[(red|green|blue|yellow|orange|purple)\](.+?)\[\/\4\]/g
+const MARK = /\*\*(.+?)\*\*|\[k\](.+?)\[\/k\]|`([^`]+)`|\[(red|green|blue|yellow|orange|purple)\](.+?)\[\/\4\]/g
 
 const isRichColor = (value: string): value is RichColor => Object.values(RichColors).some((c) => c === value)
 
