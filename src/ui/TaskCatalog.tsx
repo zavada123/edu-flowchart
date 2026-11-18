@@ -3,6 +3,7 @@ import { ShapeIcon } from "./Icons.tsx"
 import "./tokens.css"
 import "./flowchart.css"
 import "./catalog.css"
+import { plainText } from "./rich-text.ts"
 
 interface Props {
   readonly tasks: readonly Task[]
@@ -64,7 +65,7 @@ export const TaskCatalog = ({ tasks, solved, current, onPick }: Props) => {
                     )}
                   </span>
                   <b>{t.title}</b>
-                  <small>{t.text}</small>
+                  <small>{plainText(t.text)}</small>
                 </button>
               )
             })}
